@@ -1,0 +1,65 @@
+HELP.md
+.gradle
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+bin/
+!**/src/main/**/bin/
+!**/src/test/**/bin/
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+out/
+!**/src/main/**/out/
+!**/src/test/**/out/
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+
+# IntelliJ IDEA
+.idea/
+
+# Gradle files
+.gradle/
+/build/
+
+# Spring Boot files
+*.log
+/target/
+!*.war
+!*.ear
+
+# MySQL files
+*.sql
+*.sql.gz
+
+# Docker files
+docker-compose.yml
+docker-compose.yaml
+docker-compose-*.yml
+docker-compose-*.yaml
+*.md5
+*.sha1
+
+/docker/docekr-compose.yml
+/docker/mysql
