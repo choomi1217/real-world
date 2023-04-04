@@ -8,6 +8,7 @@ import cho.o.me.blog.user.ui.reauest.UserRequest;
 import cho.o.me.blog.user.ui.response.UserResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,13 +18,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
-
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public cho.o.me.blog.user.ui.response.UserResponse register(UserRequest userRequest) {
-        User user = userRepository.save(new User(userRequest.getUsername(), userRequest.getEmail(), userRequest.getPassword()));
+    public UserResponse register(UserRequest userRequest) {
+        User user = userRepository.save(
+                new User( userRequest.getUsername()
+                        , userRequest.getEmail()
+                        , passwordEncoder.encode(userRequest.getPassword())
+                ));
 
-        return cho.o.me.blog.user.ui.response.UserResponse.builder()
+        return UserResponse.builder()
                 .username(user.getUsername())
                 .email(user.getEmail())
                 .token(user.getEmail())
@@ -46,7 +51,7 @@ public class UserService {
 
     public UserResponse login(LoginRequest loginRequest) {
         User user = userRepository.findByEmail(loginRequest.getEmail());
-        if(user.getPassword() != loginRequest.getPassword()){
+        if(passwordEncoder.matches(user.getPassword(), loginRequest.getPassword())){
             throw new IllegalArgumentException("password is not matched");
         }
         return UserResponse.builder()
