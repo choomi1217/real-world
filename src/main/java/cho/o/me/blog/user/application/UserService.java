@@ -38,10 +38,13 @@ public class UserService {
 
 
     public UserResponse login(LoginRequest loginRequest) {
+
         User user = userRepository.findByEmail(loginRequest.getEmail());
+
         if(passwordEncoder.matches(user.getPassword(), loginRequest.getPassword())){
             throw new IllegalArgumentException("password is not matched");
         }
+
         return userToResponse(user);
     }
 
