@@ -1,0 +1,23 @@
+package cho.o.me.blog.follow.domain;
+
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@Table(name = "follow")
+public class Follow {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String followedName;
+    private String followerName;
+
+    public Follow(String followedName, String followerName) {
+        this.followedName = followedName;
+        this.followerName = followerName;
+    }
+}
