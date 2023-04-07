@@ -21,7 +21,6 @@ public class UserService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    @Transactional
     public UserResponse register(UserRequest userRequest) {
         User user = userRepository.save(
                 new User( userRequest.getUsername()
