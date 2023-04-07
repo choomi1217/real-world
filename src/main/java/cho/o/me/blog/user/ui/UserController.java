@@ -21,23 +21,23 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping(path = "/api/users/login")
+    @PostMapping("/api/users/login")
     public ResponseEntity<UserResponse> login(@Validated @RequestBody LoginRequest loginRequest){
         return ResponseEntity.ok(userService.login(loginRequest));
     }
 
-    @GetMapping(path = "/api/user")
+    @GetMapping("/api/user")
     public ResponseEntity<UserResponse> user(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(userService.user(userDetails.getUsername()));
     }
 
-    @PostMapping(path = "/api/users")
+    @PostMapping("/api/users")
     public ResponseEntity<UserResponse> register(@Validated @RequestBody UserRequest userRequest) throws URISyntaxException {
         return ResponseEntity.created(new URI("/api/user"))
                 .body(userService.register(userRequest));
     }
 
-    @PutMapping(path = "/api/user")
+    @PutMapping("/api/user")
     public ResponseEntity<UserResponse> update(
               @AuthenticationPrincipal UserDetails userDetails
             , @Validated @RequestBody UpdateRequest updateRequest){
