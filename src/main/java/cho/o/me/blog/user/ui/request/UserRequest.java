@@ -1,4 +1,4 @@
-package cho.o.me.blog.user.ui.reauest;
+package cho.o.me.blog.user.ui.request;
 
 import lombok.Getter;
 
