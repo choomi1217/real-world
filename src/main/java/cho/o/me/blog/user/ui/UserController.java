@@ -1,9 +1,9 @@
 package cho.o.me.blog.user.ui;
 
-import cho.o.me.blog.user.ui.reauest.LoginRequest;
+import cho.o.me.blog.user.ui.request.LoginRequest;
 import cho.o.me.blog.user.application.UserService;
-import cho.o.me.blog.user.ui.reauest.UpdateRequest;
-import cho.o.me.blog.user.ui.reauest.UserRequest;
+import cho.o.me.blog.user.ui.request.UpdateRequest;
+import cho.o.me.blog.user.ui.request.UserRequest;
 import cho.o.me.blog.user.ui.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

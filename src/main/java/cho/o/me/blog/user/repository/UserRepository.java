@@ -1,7 +1,7 @@
 package cho.o.me.blog.user.repository;
 
 import cho.o.me.blog.user.domain.User;
-import cho.o.me.blog.user.ui.reauest.UpdateRequest;
+import cho.o.me.blog.user.ui.request.UpdateRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
