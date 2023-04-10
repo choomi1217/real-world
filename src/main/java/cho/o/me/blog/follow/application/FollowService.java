@@ -3,8 +3,6 @@ package cho.o.me.blog.follow.application;
 import cho.o.me.blog.follow.domain.Follow;
 import cho.o.me.blog.follow.repository.FollowRepository;
 import cho.o.me.blog.profile.ui.response.ProfileResponse;
-import cho.o.me.blog.user.application.UserService;
-import cho.o.me.blog.user.ui.response.UserResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class FollowService {
 
     FollowRepository followRepository;
-    UserService userService;
+    MemberService memberService;
 
     public boolean exists(String currentUsername, String username) {
         return followRepository.exists(currentUsername, username);
@@ -21,13 +19,13 @@ public class FollowService {
 
     public ProfileResponse follow(String currentUsername, String username) {
         followRepository.save(new Follow(currentUsername, username));
-        UserResponse user = userService.user(username);
+        UserResponse user = memberService.user(username);
         return new ProfileResponse(user, true);
     }
 
     public ProfileResponse unfollow(String currentUsername, String username) {
         followRepository.delete(new Follow(currentUsername, username));
-        UserResponse user = userService.user(username);
+        UserResponse user = memberService.user(username);
         return new ProfileResponse(user, false);
     }
 }
