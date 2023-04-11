@@ -2,12 +2,14 @@ package cho.o.me.blog.jwt;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.util.Base64;
 import java.util.Date;
 import java.util.UUID;
 
+@Service
 public class JwtService {
     private static final String SECRET_KEY = "mySecretKey";
 
