@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface FollowRepository extends JpaRepository<Follow, Long>{
 
-    @Query("select count(*) > 0 from FOLLOW f where f.follower_name = :currentUsername and f.followed_name = :username")
-    boolean exists(@Param("userUsername") String currentUsername, @Param("userUsername") String username);
+    @Query("select count(*) > 0 from Follow f where f.followerName = :currentUsername and f.followedName = :username")
+    boolean exists(@Param("currentUsername") String currentUsername, @Param("username") String username);
+
 }
