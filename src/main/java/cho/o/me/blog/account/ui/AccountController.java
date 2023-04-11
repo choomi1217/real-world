@@ -36,7 +36,7 @@ public class AccountController {
 
     @PutMapping("/api/user")
     public ResponseEntity<AccountResponse> update(
-            @AuthenticationPrincipal UserDetails userDetails
+              @AuthenticationPrincipal UserDetails userDetails
             , @Validated @RequestBody UpdateRequest updateRequest){
         return ResponseEntity.ok(accountService.update(userDetails.getUsername(), updateRequest));
     }
