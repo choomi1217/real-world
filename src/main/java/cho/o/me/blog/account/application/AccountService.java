@@ -54,8 +54,10 @@ public class AccountService {
     }
 
     public AccountResponse update(String email, UpdateRequest updateRequest) {
-        Account account = accountRepository.update(email, accountRepository.findByEmail(email));
-        Member member = memberRepository.update(email, memberRepository.findByEmail(email));
+        Account account = accountRepository.findByEmail(email);
+        account.update(updateRequest.encoding(passwordEncoder));
+        Member member = memberRepository.findByEmail(email);
+        member.update(updateRequest);
         return accountResponse(account, member);
     }
 
