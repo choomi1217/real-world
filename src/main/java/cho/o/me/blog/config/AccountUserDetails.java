@@ -1,12 +1,19 @@
 package cho.o.me.blog.config;
 
+import cho.o.me.blog.account.domain.Account;
 import cho.o.me.blog.account.ui.response.AccountResponse;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class AccountUserDetails implements UserDetails {
+
+    Account account;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

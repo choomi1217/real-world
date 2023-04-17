@@ -1,7 +1,11 @@
 package cho.o.me.blog.follow.domain;
 
-import jakarta.persistence.*;
 import lombok.*;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Getter
 @Entity
