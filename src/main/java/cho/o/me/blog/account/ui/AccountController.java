@@ -5,6 +5,9 @@ import cho.o.me.blog.account.ui.request.AccountRequest;
 import cho.o.me.blog.account.ui.request.LoginRequest;
 import cho.o.me.blog.account.ui.request.UpdateRequest;
 import cho.o.me.blog.account.ui.response.AccountResponse;
+import cho.o.me.blog.exception.UserNotFoundElementException;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,17 +18,27 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 @RestController
+@RequiredArgsConstructor
 public class AccountController {
 
-    AccountUsercase accountUsercase;
+    private final AccountUsercase accountUsercase;
     @PostMapping("/api/users/login")
-    public ResponseEntity<AccountResponse> login(@Validated @RequestBody LoginRequest loginRequest){
-        return ResponseEntity.ok(accountUsercase.login(loginRequest));
+    public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest) {
+        try {
+            return ResponseEntity.ok(accountUsercase.login(loginRequest));
+        } catch (UserNotFoundElementException e) {
+            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
+        }
     }
 
     @GetMapping("/api/user")
-    public ResponseEntity<AccountResponse> user(@AuthenticationPrincipal UserDetails userDetails){
-        return ResponseEntity.ok(accountUsercase.user(userDetails.getUsername()));
+    public ResponseEntity<?> user(@AuthenticationPrincipal UserDetails userDetails){
+        try {
+            return ResponseEntity.ok(accountUsercase.user(userDetails.getUsername()));
+        } catch (UserNotFoundElementException e) {
+            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
+        }
+
     }
 
     @PostMapping("/api/users")
@@ -35,10 +48,15 @@ public class AccountController {
     }
 
     @PutMapping("/api/user")
-    public ResponseEntity<AccountResponse> update(
+    public ResponseEntity<?> update(
               @AuthenticationPrincipal UserDetails userDetails
             , @Validated @RequestBody UpdateRequest updateRequest){
-        return ResponseEntity.ok(accountUsercase.update(userDetails.getUsername(), updateRequest));
+        try {
+            return ResponseEntity.ok(accountUsercase.update(userDetails.getUsername(), updateRequest));
+        } catch (UserNotFoundElementException e) {
+            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
+        }
+
     }
 
 }

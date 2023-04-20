@@ -1,7 +1,6 @@
 package cho.o.me.blog.config;
 
 import cho.o.me.blog.account.domain.Account;
-import cho.o.me.blog.account.ui.response.AccountResponse;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -22,12 +21,12 @@ public class AccountUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return account.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return account.getEmail();
     }
 
     @Override
