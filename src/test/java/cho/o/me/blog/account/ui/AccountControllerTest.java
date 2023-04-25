@@ -5,16 +5,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureMockMvc(print = MockMvcPrint.SYSTEM_OUT)
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 class AccountControllerTest {
 
     @Autowired
@@ -23,8 +26,10 @@ class AccountControllerTest {
 
     @Test
     void login() throws Exception {
-        String email = "test";
-        String password = "test";
+        String email = "john@john.com";
+        String password = "john";
+        String username = "JohnPark";
+
         LoginRequest request = new LoginRequest(email, password);
         String content = objectMapper.writeValueAsString(request);
 
