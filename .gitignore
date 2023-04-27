@@ -63,3 +63,7 @@ docker-compose-*.yaml
 
 /docker/docekr-compose.yml
 /docker/mysql
+/docker/*
+/docker
+/docker/**
+/docker/**/
