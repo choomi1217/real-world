@@ -20,7 +20,7 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public Account findByEmail(String email) throws UserNotFoundElementException {
-        return accountRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundElementException(""));
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
     }
 }

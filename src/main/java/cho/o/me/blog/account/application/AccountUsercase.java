@@ -10,8 +10,11 @@ import cho.o.me.blog.jwt.JwtService;
 import cho.o.me.blog.member.application.MemberService;
 import cho.o.me.blog.member.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -23,39 +26,41 @@ public class AccountUsercase {
     private final PasswordEncoder passwordEncoder;
 
 
+    @Transactional
     public AccountResponse register(AccountRequest request) {
         Account account = accountService.save(
-                new Account(request.getEmail(), passwordEncoder.encode(request.getPassword()))
+                new Account(request.email(), passwordEncoder.encode(request.password()))
         );
 
         Member member = memberService.save(Member.builder()
-                .username(request.getUsername())
-                .email(request.getEmail())
+                .username(request.username())
+                .email(request.email())
                 .build());
 
         return accountResponse(account, member);
     }
 
     public AccountResponse user(String email) throws UserNotFoundElementException {
-        Account account = accountService.findByEmail(email);
+        Account account = accountService.findByEmail(email).orElseThrow();
         Member member = memberService.findByEmail(email);
         return accountResponse(account, member);
     }
 
 
-    public AccountResponse login(LoginRequest loginRequest) throws UserNotFoundElementException, IllegalArgumentException {
-        Account account = accountService.findByEmail(loginRequest.getEmail());
-        Member member = memberService.findByEmail(loginRequest.getEmail());
-
-        if (!passwordEncoder.matches(account.getPassword(), loginRequest.getPassword())) {
-            throw new IllegalArgumentException("password is not matched");
+    public AccountResponse login(LoginRequest loginRequest){
+        try {
+            Account account = accountService.findByEmail(loginRequest.getEmail())
+                    .filter(find -> passwordEncoder.matches(loginRequest.getPassword(), find.getPassword()))
+                    .orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
+            Member member = memberService.findByEmail(loginRequest.getEmail());
+            return accountResponse(account, member);
+        } catch (UserNotFoundElementException e) {
+            throw new IllegalArgumentException("Invalid email or password.");
         }
-
-        return accountResponse(account, member);
     }
 
     public AccountResponse update(String email, UpdateRequest updateRequest) throws UserNotFoundElementException {
-        Account account = accountService.findByEmail(email);
+        Account account = accountService.findByEmail(email).orElseThrow();
         account.update(updateRequest.encoding(passwordEncoder));
         Member member = memberService.findByEmail(email);
         member.update(updateRequest);

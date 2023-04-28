@@ -22,13 +22,17 @@ import java.net.URISyntaxException;
 public class AccountController {
 
     private final AccountUsercase accountUsercase;
+
+
     @PostMapping("/api/users/login")
-    public ResponseEntity<?> login(@Validated @RequestBody LoginRequest loginRequest) {
-        try {
-            return ResponseEntity.ok(accountUsercase.login(loginRequest));
-        } catch (UserNotFoundElementException e) {
-            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
-        }
+    public ResponseEntity<AccountResponse> login(@Validated @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(accountUsercase.login(loginRequest));
+    }
+
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping("/api/users")
+    public ResponseEntity<AccountResponse> register(@Validated @RequestBody AccountRequest request) throws URISyntaxException {
+        return ResponseEntity.created(new URI("/api/user")).body(accountUsercase.register(request));
     }
 
     @GetMapping("/api/user")
@@ -38,13 +42,6 @@ public class AccountController {
         } catch (UserNotFoundElementException e) {
             return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
         }
-
-    }
-
-    @PostMapping("/api/users")
-    public ResponseEntity<AccountResponse> register(@Validated @RequestBody AccountRequest request) throws URISyntaxException {
-        return ResponseEntity.created(new URI("/api/user"))
-                .body(accountUsercase.register(request));
     }
 
     @PutMapping("/api/user")
