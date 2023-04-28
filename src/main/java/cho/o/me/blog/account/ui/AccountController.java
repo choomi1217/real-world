@@ -36,24 +36,15 @@ public class AccountController {
     }
 
     @GetMapping("/api/user")
-    public ResponseEntity<?> user(@AuthenticationPrincipal UserDetails userDetails){
-        try {
-            return ResponseEntity.ok(accountUsercase.user(userDetails.getUsername()));
-        } catch (UserNotFoundElementException e) {
-            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
-        }
+    public ResponseEntity user(@AuthenticationPrincipal UserDetails userDetails){
+        return ResponseEntity.ok(accountUsercase.user(userDetails.getUsername()));
     }
 
     @PutMapping("/api/user")
-    public ResponseEntity<?> update(
+    public ResponseEntity update(
               @AuthenticationPrincipal UserDetails userDetails
             , @Validated @RequestBody UpdateRequest updateRequest){
-        try {
-            return ResponseEntity.ok(accountUsercase.update(userDetails.getUsername(), updateRequest));
-        } catch (UserNotFoundElementException e) {
-            return ResponseEntity.status(e.getCode().getHttpStatus()).body(e.getMessage());
-        }
-
+        return ResponseEntity.ok(accountUsercase.update(userDetails.getUsername(), updateRequest));
     }
 
 }
