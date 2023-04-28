@@ -22,10 +22,12 @@ public class Account {
     Long id;
     String email;
     String password;
+    String token;
 
-    public Account(String email, String password) {
+    public Account(String email, String password, String token) {
         this.email = email;
         this.password = password;
+        this.token = token;
     }
 
 
