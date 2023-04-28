@@ -67,3 +67,8 @@ docker-compose-*.yaml
 /docker
 /docker/**
 /docker/**/
+
+**/.DS_Stores
+.DS_Store
+/src/.DS_Store
+/src/main/java/cho/o/me/blog/account/.DS_Store
