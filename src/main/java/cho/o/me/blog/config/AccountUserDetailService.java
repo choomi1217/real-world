@@ -18,11 +18,6 @@ public class AccountUserDetailService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        try {
-            return new AccountUserDetails(accountService.findByEmail(username));
-        } catch (UserNotFoundElementException e) {
-            throw new RuntimeException(e);
-        }
-
+        return new AccountUserDetails(accountService.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User Not Found")));
     }
 }
