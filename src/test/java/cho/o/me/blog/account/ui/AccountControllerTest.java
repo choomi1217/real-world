@@ -34,11 +34,17 @@ class AccountControllerTest {
     @DisplayName("회원가입")
     @Transactional
     void register() throws Exception {
-        AccountRequest request = new AccountRequest("john@john.com", "john", "JohnPark");
+        String email = "john@john.com";
+        String username = "john";
+        String password = "JohnPark";
+        AccountRequest request = new AccountRequest(email, username, password);
         mockMvc.perform(post("/api/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(request)))
                 .andExpect(status().is2xxSuccessful())
+                .andExpect(jsonPath("$.email").value(email))
+                .andExpect(jsonPath("$.token").isString())
+                .andExpect(jsonPath("$.username").value(username))
                 .andDo(print());
     }
 
