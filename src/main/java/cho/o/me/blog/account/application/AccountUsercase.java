@@ -29,21 +29,22 @@ public class AccountUsercase {
     @Transactional
     public AccountResponse register(AccountRequest request) {
         Account account = accountService.save(
-                new Account(request.email(), passwordEncoder.encode(request.password()))
+                new Account(request.email(), passwordEncoder.encode(request.password()), jwtService.token(request.email()))
         );
 
         Member member = memberService.save(Member.builder()
                 .username(request.username())
                 .email(request.email())
-                .build());
+                .build()
+        );
 
-        return accountResponse(account, member);
+        return new AccountResponse(account, member);
     }
 
-    public AccountResponse user(String email) throws UserNotFoundElementException {
-        Account account = accountService.findByEmail(email).orElseThrow();
+    public AccountResponse user(String email)  {
+        Account account = accountService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
         Member member = memberService.findByEmail(email);
-        return accountResponse(account, member);
+        return new AccountResponse(account, member);
     }
 
 
@@ -53,29 +54,18 @@ public class AccountUsercase {
                     .filter(find -> passwordEncoder.matches(loginRequest.getPassword(), find.getPassword()))
                     .orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
             Member member = memberService.findByEmail(loginRequest.getEmail());
-            return accountResponse(account, member);
+            return new AccountResponse(account, member);
         } catch (UserNotFoundElementException e) {
             throw new IllegalArgumentException("Invalid email or password.");
         }
     }
 
-    public AccountResponse update(String email, UpdateRequest updateRequest) throws UserNotFoundElementException {
-        Account account = accountService.findByEmail(email).orElseThrow();
+    public AccountResponse update(String email, UpdateRequest updateRequest) {
+        Account account = accountService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
         account.update(updateRequest.encoding(passwordEncoder));
         Member member = memberService.findByEmail(email);
         member.update(updateRequest);
-        return accountResponse(account, member);
-    }
-
-
-    private AccountResponse accountResponse(Account account, Member member) {
-        return AccountResponse.builder()
-                .username(member.getUsername())
-                .email(account.getEmail())
-                .token(jwtService.token(account.getEmail()))
-                .bio(member.getBio())
-                .image(member.getImage())
-                .build();
+        return new AccountResponse(account, member);
     }
 
 }
