@@ -7,22 +7,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class AccountResponse {
-    private String username;
-    private String email;
-    private String token;
-    private String bio;
-    private String image;
+public record AccountResponse(String username, String email, String token, String bio, String image) {
 
-    public AccountResponse(Account account, Member member) {
-                this.username = member.getUsername();
-                this.email = account.getEmail();
-                this.token = account.getToken();
-                this.bio = member.getBio();
-                this.image = member.getImage();
+    public static AccountResponse from(Account account, Member member) {
+        return new AccountResponse(
+                member.getUsername(),
+                account.getEmail(),
+                account.getToken(),
+                member.getBio(),
+                member.getImage()
+        );
     }
 }
