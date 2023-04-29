@@ -23,7 +23,6 @@ public class AccountController {
 
     private final AccountUsercase accountUsercase;
 
-
     @PostMapping("/api/users/login")
     public ResponseEntity<AccountResponse> login(@Validated @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(accountUsercase.login(loginRequest));
@@ -36,12 +35,12 @@ public class AccountController {
     }
 
     @GetMapping("/api/user")
-    public ResponseEntity user(@AuthenticationPrincipal UserDetails userDetails){
+    public ResponseEntity<AccountResponse> user(@AuthenticationPrincipal UserDetails userDetails){
         return ResponseEntity.ok(accountUsercase.user(userDetails.getUsername()));
     }
 
     @PutMapping("/api/user")
-    public ResponseEntity update(
+    public ResponseEntity<AccountResponse> update(
               @AuthenticationPrincipal UserDetails userDetails
             , @Validated @RequestBody UpdateRequest updateRequest){
         return ResponseEntity.ok(accountUsercase.update(userDetails.getUsername(), updateRequest));
