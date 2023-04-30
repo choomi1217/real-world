@@ -2,11 +2,10 @@ package cho.o.me.blog.account.application;
 
 import cho.o.me.blog.account.domain.Account;
 import cho.o.me.blog.account.repository.AccountRepository;
-import cho.o.me.blog.exception.UserNotFoundElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service

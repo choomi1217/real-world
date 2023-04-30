@@ -3,9 +3,9 @@ package cho.o.me.blog.article.repository;
 
 import cho.o.me.blog.article.domain.Article;
 import cho.o.me.blog.article.ui.request.ArticleRequest;
+import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
 
-import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
 
