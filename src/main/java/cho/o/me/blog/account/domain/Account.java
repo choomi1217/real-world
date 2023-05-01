@@ -32,7 +32,7 @@ public class Account {
 
 
     public void update(UpdateRequest updateRequest) {
-        this.email = updateRequest.getEmail();
-        this.password = updateRequest.getPassword();
+        this.email = updateRequest.email();
+        this.password = updateRequest.password();
     }
 }

@@ -62,7 +62,7 @@ public class AccountUsercase {
 
     public AccountResponse update(String email, UpdateRequest updateRequest) {
         Account account = accountService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
-        account.update(updateRequest.encoding(passwordEncoder));
+        account.update(updateRequest.toAccountWithEncodedPassword(updateRequest, passwordEncoder));
         Member member = memberService.findByEmail(email);
         member.update(updateRequest);
         return AccountResponse.from(account, member);

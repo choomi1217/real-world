@@ -25,9 +25,9 @@ public class Member {
     private String image;
 
     public void update(UpdateRequest updateRequest) {
-        this.email = updateRequest.getEmail();
-        this.bio = updateRequest.getBio();
-        this.image = updateRequest.getImage();
-        this.username = updateRequest.getUsername();
+        this.email = updateRequest.email();
+        this.bio = updateRequest.bio();
+        this.image = updateRequest.image();
+        this.username = updateRequest.username();
     }
 }
