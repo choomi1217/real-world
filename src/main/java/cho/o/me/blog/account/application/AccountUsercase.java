@@ -50,10 +50,10 @@ public class AccountUsercase {
 
     public AccountResponse login(LoginRequest loginRequest){
         try {
-            Account account = accountService.findByEmail(loginRequest.getEmail())
-                    .filter(find -> passwordEncoder.matches(loginRequest.getPassword(), find.getPassword()))
+            Account account = accountService.findByEmail(loginRequest.email())
+                    .filter(find -> passwordEncoder.matches(loginRequest.password(), find.getPassword()))
                     .orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
-            Member member = memberService.findByEmail(loginRequest.getEmail());
+            Member member = memberService.findByEmail(loginRequest.email());
             return AccountResponse.from(account, member);
         } catch (UserNotFoundElementException e) {
             throw new IllegalArgumentException("Invalid email or password.");
