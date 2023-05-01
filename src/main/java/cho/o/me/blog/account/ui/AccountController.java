@@ -5,7 +5,6 @@ import cho.o.me.blog.account.ui.request.AccountRequest;
 import cho.o.me.blog.account.ui.request.LoginRequest;
 import cho.o.me.blog.account.ui.request.UpdateRequest;
 import cho.o.me.blog.account.ui.response.AccountResponse;
-import cho.o.me.blog.exception.UserNotFoundElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
