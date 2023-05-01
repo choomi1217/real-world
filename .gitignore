@@ -72,3 +72,6 @@ docker-compose-*.yaml
 .DS_Store
 /src/.DS_Store
 /src/main/java/cho/o/me/blog/account/.DS_Store
+
+#테스트 아무거나 해보기 위해 만든 테스트 클래스
+src/test/java/cho/o/me/blog/TestAnything.java
