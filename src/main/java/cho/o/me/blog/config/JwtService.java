@@ -1,5 +1,6 @@
 package cho.o.me.blog.config;
 
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,9 @@ public class JwtService {
 
     public String tokenToEmail(String token){
         return Jwts.parserBuilder()
-                .setSigningKey(SECRET_KEY)
+                .setSigningKey(generateKey())
                 .build()
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
+                .parseClaimsJws(token).getBody().getSubject();
     }
 
     private SecretKey generateKey() {
