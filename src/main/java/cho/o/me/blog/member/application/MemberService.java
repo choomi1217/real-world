@@ -5,28 +5,30 @@ import cho.o.me.blog.member.domain.Member;
 import cho.o.me.blog.member.ui.response.ProfileResponse;
 import cho.o.me.blog.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class MemberService {
 
-    private final FollowService followService;
     private final MemberRepository memberRepository;
 
     public ProfileResponse profile(String currentUsername, String username) {
-        return new ProfileResponse( memberRepository.findByEmail(username), followService.exists(currentUsername, username));
+        return null;
     }
 
     public ProfileResponse profile(String username) {
-        return new ProfileResponse( memberRepository.findByEmail(username));
+        return new ProfileResponse( memberRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User Not Found")));
     }
 
     public Member save(Member member) {
         return memberRepository.save(member);
     }
 
-    public Member findByEmail(String email) {
+    public Optional<Member> findByEmail(String email) {
         return memberRepository.findByEmail(email);
     }
 }

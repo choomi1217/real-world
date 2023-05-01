@@ -11,21 +11,17 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class FollowService {
 
-    FollowRepository followRepository;
-    MemberService memberService;
+    private final FollowRepository followRepository;
 
-
-    public boolean exists(String currentUsername, String username) {
-        return followRepository.exists(currentUsername, username);
+    public boolean exists(String followerName, String followedName) {
+        return followRepository.exists(followerName, followedName);
     }
 
-    public ProfileResponse follow(String currentUsername, String username) {
-        followRepository.save(new Follow(currentUsername, username));
-        return memberService.profile(currentUsername, username);
+    public void follow(String followerName, String followedName) {
+        followRepository.save(new Follow(followerName, followedName));
     }
 
-    public ProfileResponse unfollow(String currentUsername, String username) {
-        followRepository.delete(new Follow(currentUsername, username));
-        return memberService.profile(currentUsername, username);
+    public void unfollow(String followerName, String followedName) {
+        followRepository.delete(new Follow(followerName, followedName));
     }
 }

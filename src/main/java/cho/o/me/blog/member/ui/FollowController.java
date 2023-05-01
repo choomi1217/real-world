@@ -1,6 +1,7 @@
 package cho.o.me.blog.member.ui;
 
 import cho.o.me.blog.follow.application.FollowService;
+import cho.o.me.blog.member.application.MemberFollowService;
 import cho.o.me.blog.member.ui.response.ProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,19 +16,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class FollowController {
 
-    FollowService followService;
+    private final MemberFollowService memberFollowService;
 
     @PostMapping(path = "/api/profiles/{username}/follow")
     public ResponseEntity<ProfileResponse> follow(
             @AuthenticationPrincipal UserDetails userDetails
             , @PathVariable String username){
-        return ResponseEntity.ok(followService.follow(userDetails.getUsername(), username));
+        return memberFollowService.follow(userDetails.getUsername(), username);
     }
 
     @DeleteMapping(path = "/api/profiles/{username}/follow")
     public ResponseEntity<ProfileResponse> unFollow(
             @AuthenticationPrincipal UserDetails userDetails
             , @PathVariable String username){
-        return ResponseEntity.ok(followService.unfollow(userDetails.getUsername(), username));
+        return memberFollowService.unfollow(userDetails.getUsername(), username);
     }
 }
