@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 public enum ErrorCode {
 
+    BadRequest(HttpStatus.BAD_REQUEST, "Bad Request"),
     NotFound(HttpStatus.NOT_FOUND, "resource can't be found to fulfill the request"),
     Forbidden(HttpStatus.FORBIDDEN, "request may be valid but the user doesn't have permissions to perform the action"),
     Unauthorized(HttpStatus.UNAUTHORIZED, "request requires authentication but it isn't provided")
