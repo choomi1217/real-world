@@ -1,5 +1,6 @@
 package cho.o.me.blog.member.ui;
 
+import cho.o.me.blog.exception.NotFollowingException;
 import cho.o.me.blog.follow.application.FollowService;
 import cho.o.me.blog.member.application.MemberFollowService;
 import cho.o.me.blog.member.ui.response.ProfileResponse;
@@ -22,13 +23,13 @@ public class FollowController {
     public ResponseEntity<ProfileResponse> follow(
             @AuthenticationPrincipal UserDetails userDetails
             , @PathVariable String username){
-        return memberFollowService.follow(userDetails.getUsername(), username);
+        return ResponseEntity.ok(memberFollowService.follow(userDetails.getUsername(), username));
     }
 
     @DeleteMapping(path = "/api/profiles/{username}/follow")
     public ResponseEntity<ProfileResponse> unFollow(
             @AuthenticationPrincipal UserDetails userDetails
-            , @PathVariable String username){
-        return memberFollowService.unfollow(userDetails.getUsername(), username);
+            , @PathVariable String username) throws NotFollowingException {
+        return ResponseEntity.ok(memberFollowService.unfollow(userDetails.getUsername(), username));
     }
 }

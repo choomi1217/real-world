@@ -1,8 +1,10 @@
 package cho.o.me.blog.member.application;
 
+import cho.o.me.blog.exception.NotFollowingException;
 import cho.o.me.blog.follow.application.FollowService;
 import cho.o.me.blog.member.domain.Member;
 import cho.o.me.blog.member.ui.response.ProfileResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,14 +18,27 @@ public class MemberFollowService {
     private final MemberService memberService;
 
 
-    public ResponseEntity<ProfileResponse> follow(String followerEmail, String followedName) {
+    public ProfileResponse follow(String followerEmail, String followedName) {
         Member follower = memberService.findByEmail(followerEmail).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
-        Member followed = memberService.findByEmail(followedName).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        Member followed = memberService.findByUsername(followedName).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
         followService.follow(follower.getUsername(), followed.getUsername());
-        return null;
+        return new ProfileResponse(followed, true);
     }
 
-    public ResponseEntity<ProfileResponse> unfollow(String follower, String followed) {
-        return null;
+    @Transactional
+    public ProfileResponse unfollow(String followerEmail, String followedName) throws NotFollowingException {
+        Member follower = memberService.findByEmail(followerEmail).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+        Member followed = memberService.findByUsername(followedName).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
+
+        if( !isItFollow(followed, follower) ){
+            throw new NotFollowingException( String.format("%s is not following %s.", follower.getUsername(), followed.getUsername()));
+        }
+
+        followService.unfollow(follower.getUsername(), followed.getUsername());
+        return new ProfileResponse(followed, false);
+    }
+
+    private boolean isItFollow(Member followed, Member follower) {
+        return followService.exists(followed.getUsername(), follower.getUsername());
     }
 }
