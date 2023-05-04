@@ -33,6 +33,7 @@ public class SecurityConfig {
                                         HttpMethod.POST
                                         , "/api/users"
                                         , "/api/users/login"
+                                        ,"/api/profiles/{username}"
                                 ).permitAll()
                                 .anyRequest().authenticated()
                 ).addFilterAt(jsonWebTokenSecurity, BasicAuthenticationFilter.class)
