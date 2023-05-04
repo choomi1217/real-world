@@ -1,9 +1,8 @@
 package cho.o.me.blog.member.application;
 
-import cho.o.me.blog.follow.application.FollowService;
 import cho.o.me.blog.member.domain.Member;
-import cho.o.me.blog.member.ui.response.ProfileResponse;
 import cho.o.me.blog.member.repository.MemberRepository;
+import cho.o.me.blog.member.ui.response.ProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -21,7 +20,7 @@ public class MemberService {
     }
 
     public ProfileResponse profile(String username) {
-        return new ProfileResponse( memberRepository.findByEmail(username).orElseThrow(()-> new UsernameNotFoundException("User Not Found")));
+        return new ProfileResponse(memberRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("User Not Found")));
     }
 
     public Member save(Member member) {
