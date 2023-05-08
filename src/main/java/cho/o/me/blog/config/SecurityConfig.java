@@ -33,8 +33,9 @@ public class SecurityConfig {
                                         HttpMethod.POST
                                         , "/api/users"
                                         , "/api/users/login"
-                                        ,"/api/profiles/{username}"
                                 ).permitAll()
+                                .requestMatchers(HttpMethod.GET,"/api/profiles/{username}")
+                                .permitAll()
                                 .anyRequest().authenticated()
                 ).addFilterAt(jsonWebTokenSecurity, BasicAuthenticationFilter.class)
                 .build();
@@ -44,4 +45,5 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 }
