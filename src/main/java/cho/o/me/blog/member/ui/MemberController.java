@@ -6,7 +6,9 @@ import cho.o.me.blog.member.application.MemberProfileService;
 import cho.o.me.blog.member.ui.response.ProfileResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,8 +34,7 @@ public class MemberController {
     }
     @GetMapping(path = "/api/profiles/{username}")
     public ResponseEntity<ProfileResponse> profile(
-            @AuthenticationPrincipal(expression = "isAuthenticated() ? principal : null") UserDetails userDetails
-            , @PathVariable String username){
+            @AuthenticationPrincipal UserDetails userDetails, @PathVariable String username){
         if(userDetails != null){
             return ResponseEntity.ok(memberProfileService.profile(userDetails.getUsername(), username));
         }else{
