@@ -22,7 +22,7 @@ public class Follow {
     private String followedName;
     private String followerName;
 
-    public Follow(String followedName, String followerName) {
+    public Follow(String followerName, String followedName) {
         this.followedName = followedName;
         this.followerName = followerName;
     }
