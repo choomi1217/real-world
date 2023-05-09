@@ -14,7 +14,7 @@ public class FollowService {
     private final FollowRepository followRepository;
 
     public boolean exists(String followerName, String followedName) {
-        return followRepository.exists(followerName, followedName);
+        return followRepository.existsFollowByFollowerNameAndFollowedName(followerName, followedName);
     }
 
     public void follow(String followerName, String followedName) {
