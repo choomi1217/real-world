@@ -11,10 +11,12 @@ import java.util.List;
 
 public class ArticleSpecifications {
 
-    public static Specification<Article> search(ArticleRequest request) {
+    /*
 
+    public static Specification<Article> search(ArticleRequest request) {
         String tag = request.getTag();
-        String author = request.getAuthor();
+        List<String> tagList = request.getTagList();
+        String author = request.get();
         String favorite = request.getFavorite();
 
         return (root, query, criteriaBuilder) -> {
@@ -31,5 +33,8 @@ public class ArticleSpecifications {
             }
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
+
     }
+
+     */
 }
