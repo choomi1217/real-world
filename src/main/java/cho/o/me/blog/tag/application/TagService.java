@@ -13,10 +13,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TagService {
 
-    private TagRepository tagRepository;
+    private final TagRepository tagRepository;
 
     public List<Tag> saveAll(List<Tag> tags){
         return tagRepository.saveAll(tags);
     }
 
+
+    public List<Tag> findAllByNameIn(List<String> names) {
+        return tagRepository.findAllByNameIn(names);
+    }
+
+    public Tag save(Tag tag) {
+        return tagRepository.save(tag);
+    }
 }

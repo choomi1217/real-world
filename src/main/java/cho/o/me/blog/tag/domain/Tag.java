@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 
 @Getter
 @Entity
@@ -14,9 +16,13 @@ import lombok.NoArgsConstructor;
 public class Tag {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
-    private String tag;
+    @Column(unique = true)
+    private String name;
 
+    public Tag(String name) {
+        this.id = UUID.randomUUID();
+        this.name = name;
+    }
 }
