@@ -10,6 +10,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 @RestController
 @RequiredArgsConstructor
 public class ArticleController {
@@ -17,8 +20,9 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<ArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated ArticleRequest request) {
-        return ResponseEntity.ok(new ArticleResponse(articleService.articles(userDetails.getUsername(), request)));
+    public ResponseEntity<ArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated ArticleRequest request) throws URISyntaxException {
+        ArticleResponse articleResponse = new ArticleResponse(articleService.create(userDetails.getUsername(), request));
+        return ResponseEntity.created(new URI("/api/article/" + articleResponse.getSlug())).body(articleResponse);
     }
 
 }

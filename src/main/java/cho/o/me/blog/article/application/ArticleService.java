@@ -3,6 +3,7 @@ package cho.o.me.blog.article.application;
 import cho.o.me.blog.article.domain.Article;
 import cho.o.me.blog.article.repository.ArticleRepository;
 import cho.o.me.blog.article.ui.request.ArticleRequest;
+import cho.o.me.blog.article.ui.response.ArticleResponse;
 import cho.o.me.blog.member.application.MemberService;
 import cho.o.me.blog.member.domain.Member;
 import cho.o.me.blog.tag.application.TagService;
@@ -13,9 +14,12 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class ArticleService {
@@ -24,7 +28,7 @@ public class ArticleService {
     private final TagService tagService;
     private final MemberService memberService;
 
-    public Article articles(String email, ArticleRequest request) {
+    public Article create(String email, ArticleRequest request) {
 
         Member member = memberService.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " is not found"));
 
@@ -43,14 +47,27 @@ public class ArticleService {
 
     private List<UUID> tagIds(List<String> tagNames) {
         List<Tag> tagList = tagService.findAllByNameIn(tagNames);
-        return tagList.stream().map(tag -> {
-            if(tagNames.contains(tag.getName())){
-                return tag.getId();
-            }else{
-                Tag save = tagService.save(new Tag(tag.getName()));
-                return save.getId();
+
+        if(tagNames.size() == tagList.size()){
+            return tagList.stream().map(Tag::getId).toList();
+        }
+
+        List<UUID> tagListUUIDs = tagList.stream().map(Tag::getId).collect(Collectors.toList());
+        Set<String> tagListNames = tagList.stream().map(Tag::getName).collect(Collectors.toSet());
+        List<Tag> newTags = new ArrayList<>();
+
+        tagNames.forEach(tagName -> {
+            if(!tagListNames.contains(tagName)){
+                Tag tag = new Tag(tagName);
+                newTags.add(tag);
             }
-        }).collect(Collectors.toList());
+        });
+
+        List<Tag> saveAll = tagService.saveAll(newTags);
+        saveAll.forEach(tag->{
+            tagListUUIDs.add(tag.getId());
+        });
+
+        return tagListUUIDs;
     }
 }
-
