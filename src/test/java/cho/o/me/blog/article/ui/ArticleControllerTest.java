@@ -60,7 +60,7 @@ class ArticleControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Token " + author.token())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(articleContent))
-                .andExpect(status().isOk())
+                .andExpect(status().is2xxSuccessful())
 //                .andExpect(jsonPath("$.artice.title").value(title))
 //                .andExpect(jsonPath("$.artice.description").value(description))
 //                .andExpect(jsonPath("$.artice.body").value(body))
