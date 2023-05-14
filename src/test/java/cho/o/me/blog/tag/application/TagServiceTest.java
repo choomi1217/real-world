@@ -22,13 +22,14 @@ class TagServiceTest {
     @DisplayName("태그를 여러개 저장 할 수 있다.")
     @Test
     public void saveAll(){
+        //given
         Tag tag1 = new Tag("tag1");
         Tag tag2 = new Tag("tag2");
         List<Tag> tagList = List.of(tag1, tag2);
+        //when
         List<Tag> saveAll = tagService.saveAll(tagList);
-
+        //then
         assertEquals(tagList.size(), saveAll.size());
-
         for (int i = 0; i < tagList.size(); i++) {
             assertEquals(tagList.get(i).getName(), saveAll.get(i).getName());
         }
@@ -38,12 +39,15 @@ class TagServiceTest {
     @DisplayName("태그 이름들로 태그를 찾을 수 있다.")
     @Test
     public void findAllByNameIn(){
+        //given
         List<String> tagnames = List.of("tag1","tag2","tag3");
         List<Tag> tagList = tagnames.stream().map(Tag::new).toList();
+        tagService.saveAll(tagList);
+        //when
         List<Tag> byNameIn = tagService.findAllByNameIn(tagnames);
+        //then
         byNameIn.forEach(tag -> {
-            System.out.println(tag.getId());
-            System.out.println(tag.getName());
+            System.out.println("Tag ID : " + tag.getId() + " | Tag Name : " + tag.getName());
         });
     }
 
