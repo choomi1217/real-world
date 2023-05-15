@@ -21,7 +21,7 @@ public class ArticleController {
 
     @PostMapping("/api/articles")
     public ResponseEntity<ArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated ArticleRequest request) throws URISyntaxException {
-        ArticleResponse articleResponse = new ArticleResponse(articleService.create(userDetails.getUsername(), request));
+        ArticleResponse articleResponse = articleService.create(userDetails.getUsername(), request);
         return ResponseEntity.created(new URI("/api/article/" + articleResponse.getSlug())).body(articleResponse);
     }
 
