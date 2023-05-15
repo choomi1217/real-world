@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -26,5 +27,9 @@ public class TagService {
 
     public Tag save(Tag tag) {
         return tagRepository.save(tag);
+    }
+
+    public List<Tag> findAllById(List<UUID> ids){
+        return tagRepository.findAllByIdIn(ids);
     }
 }
