@@ -48,9 +48,9 @@ public class ArticleService {
     private ArticleResponse articleResponse(Article article) {
         return new ArticleResponse(
                 article.getTitle(),
-                article.getBody(),
                 article.getSlug(),
-                article.getTitle(),
+                article.getDescription(),
+                article.getBody(),
                 tagService.findAllById(article.getTagList())
         );
     }
