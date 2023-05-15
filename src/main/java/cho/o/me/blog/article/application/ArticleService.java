@@ -28,7 +28,7 @@ public class ArticleService {
     private final TagService tagService;
     private final MemberService memberService;
 
-    public Article create(String email, ArticleRequest request) {
+    public ArticleResponse create(String email, ArticleRequest request) {
 
         Member member = memberService.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " is not found"));
 
@@ -42,7 +42,17 @@ public class ArticleService {
                 .author(member.getUsername())
                 .build();
 
-        return articleRepository.save(article);
+        return articleResponse(articleRepository.save(article));
+    }
+
+    private ArticleResponse articleResponse(Article article) {
+        return new ArticleResponse(
+                article.getTitle(),
+                article.getBody(),
+                article.getSlug(),
+                article.getTitle(),
+                tagService.findAllById(article.getTagList())
+        );
     }
 
     private List<UUID> tagIds(List<String> tagNames) {
@@ -50,8 +60,13 @@ public class ArticleService {
 
         if(tagNames.size() == tagList.size()){
             return tagList.stream().map(Tag::getId).toList();
+        }else{
+            return newTagIds(tagNames, tagList);
         }
 
+    }
+
+    private List<UUID> newTagIds(List<String> tagNames, List<Tag> tagList) {
         List<UUID> tagListUUIDs = tagList.stream().map(Tag::getId).collect(Collectors.toList());
         Set<String> tagListNames = tagList.stream().map(Tag::getName).collect(Collectors.toSet());
         List<Tag> newTags = new ArrayList<>();
@@ -63,8 +78,7 @@ public class ArticleService {
             }
         });
 
-        List<Tag> saveAll = tagService.saveAll(newTags);
-        saveAll.forEach(tag->{
+        tagService.saveAll(newTags).forEach(tag -> {
             tagListUUIDs.add(tag.getId());
         });
 
