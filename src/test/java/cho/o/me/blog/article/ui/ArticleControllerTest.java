@@ -18,7 +18,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -32,6 +33,7 @@ class ArticleControllerTest {
     MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
     AccountResponse author;
+
     @BeforeEach
     public void setup() throws Exception {
         AccountStep accountStep = new AccountStep(mockMvc);
@@ -45,7 +47,7 @@ class ArticleControllerTest {
         String title = "title";
         String description = "description";
         String body = "body";
-        List<String> tagList = List.of("tag1","tag2");
+        List<String> tagList = List.of("tag1", "tag2");
 
         ArticleRequest articleRequest = ArticleRequest.builder()
                 .title(title)
@@ -61,19 +63,17 @@ class ArticleControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(articleContent))
                 .andExpect(status().is2xxSuccessful())
-//                .andExpect(jsonPath("$.artice.title").value(title))
-//                .andExpect(jsonPath("$.artice.description").value(description))
-//                .andExpect(jsonPath("$.artice.body").value(body))
-//                .andExpect(jsonPath("$.artice.tagList[0]").value(tagList.get(0)))
-//                .andExpect(jsonPath("$.artice.tagList[1]").value(tagList.get(1)))
-//                .andExpect(jsonPath("$.artice.author.username").value(author.username()))
+                .andExpect(jsonPath("title").value(title))
+                .andExpect(jsonPath("description").value(description))
+                .andExpect(jsonPath("body").value(body))
+                .andExpect(jsonPath("tagList", containsInAnyOrder(tagList.toArray(new String[0]))))
                 .andDo(print());
     }
 
     //Get Article
     @DisplayName("게시글 한 건을 조회할 수 있다.")
     @Test
-    public void articels(){
+    public void articels() {
 
     }
 
