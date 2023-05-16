@@ -2,7 +2,8 @@ package cho.o.me.blog.article.ui;
 
 import cho.o.me.blog.account.AccountStep;
 import cho.o.me.blog.account.ui.response.AccountResponse;
-import cho.o.me.blog.article.ui.request.ArticleRequest;
+import cho.o.me.blog.article.ui.request.CreateArticleRequest;
+import cho.o.me.blog.article.ui.response.CreateArticleResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -49,14 +51,14 @@ class ArticleControllerTest {
         String body = "body";
         List<String> tagList = List.of("tag1", "tag2");
 
-        ArticleRequest articleRequest = ArticleRequest.builder()
+        CreateArticleRequest createArticleRequest = CreateArticleRequest.builder()
                 .title(title)
                 .description(description)
                 .body(body)
                 .tagList(tagList)
                 .build();
 
-        String articleContent = mapper.writeValueAsString(articleRequest);
+        String articleContent = mapper.writeValueAsString(createArticleRequest);
 
         mockMvc.perform(post("/api/articles")
                         .header(HttpHeaders.AUTHORIZATION, "Token " + author.token())
@@ -70,10 +72,38 @@ class ArticleControllerTest {
                 .andDo(print());
     }
 
-    //Get Article
     @DisplayName("게시글 한 건을 조회할 수 있다.")
     @Test
-    public void articels() {
+    public void articels() throws Exception {
+        //게시글 만들고
+        CreateArticleResponse article = createArticle();
+        //검색이 되는지 확인하면 된다
+        mockMvc.perform(get("/api/articles/"+article.getSlug()))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    private CreateArticleResponse createArticle() throws Exception {
+        String title = "How to train your dragon";
+        String description = "Ever wonder how?";
+        String body = "It takes a Jacobian";
+        List<String> tagList = List.of("dragons", "training");
+
+        CreateArticleRequest createArticleRequest = CreateArticleRequest.builder()
+                .title(title)
+                .description(description)
+                .body(body)
+                .tagList(tagList)
+                .build();
+
+        String articleContent = mapper.writeValueAsString(createArticleRequest);
+
+        String contentAsString = mockMvc.perform(post("/api/articles")
+                .header(HttpHeaders.AUTHORIZATION, "Token " + author.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(articleContent)).andReturn().getResponse().getContentAsString();
+
+        return mapper.readValue(contentAsString, CreateArticleResponse.class);
 
     }
 
