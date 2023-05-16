@@ -34,7 +34,11 @@ public class SecurityConfig {
                                         , "/api/users"
                                         , "/api/users/login"
                                 ).permitAll()
-                                .requestMatchers(HttpMethod.GET,"/api/profiles/{username}")
+                                .requestMatchers(
+                                        HttpMethod.GET
+                                        ,"/api/profiles/{username}"
+                                        ,"/api/articles/{slug}"
+                                )
                                 .permitAll()
                                 .anyRequest().authenticated()
                 ).addFilterAt(jsonWebTokenSecurity, BasicAuthenticationFilter.class)
