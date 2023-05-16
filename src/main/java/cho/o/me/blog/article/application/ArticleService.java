@@ -2,8 +2,10 @@ package cho.o.me.blog.article.application;
 
 import cho.o.me.blog.article.domain.Article;
 import cho.o.me.blog.article.repository.ArticleRepository;
-import cho.o.me.blog.article.ui.request.ArticleRequest;
+import cho.o.me.blog.article.ui.request.CreateArticleRequest;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
+import cho.o.me.blog.article.ui.response.CreateArticleResponse;
+import cho.o.me.blog.exception.ArticleNotFoundException;
 import cho.o.me.blog.member.application.MemberService;
 import cho.o.me.blog.member.domain.Member;
 import cho.o.me.blog.tag.application.TagService;
@@ -24,20 +26,21 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleService {
 
+    private final ArticleTagService articleTagService;
     private final ArticleRepository articleRepository;
     private final TagService tagService;
     private final MemberService memberService;
 
-    public ArticleResponse create(String email, ArticleRequest request) {
+    public CreateArticleResponse create(String email, CreateArticleRequest request) {
 
         Member member = memberService.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " is not found"));
 
         Article article = Article.builder()
-                .slug(request.getTitle())
+                .slug(slug(request.getTitle()))
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .body(request.getBody())
-                .tagList(tagIds(request.getTagList()))
+                .tagList(articleTagService.tagIds(request.getTagList()))
                 .createdAt(String.valueOf(Date.valueOf(LocalDate.now())))
                 .author(member.getUsername())
                 .build();
@@ -45,8 +48,12 @@ public class ArticleService {
         return articleResponse(articleRepository.save(article));
     }
 
-    private ArticleResponse articleResponse(Article article) {
-        return new ArticleResponse(
+    private String slug(String title) {
+        return title.replace(' ', '_');
+    }
+
+    private CreateArticleResponse articleResponse(Article article) {
+        return CreateArticleResponse.of(
                 article.getTitle(),
                 article.getSlug(),
                 article.getDescription(),
@@ -83,5 +90,11 @@ public class ArticleService {
         });
 
         return tagListUUIDs;
+    }
+
+    public ArticleResponse findBySlug(String slug) {
+        Article article = articleRepository.findBySlug(slug).orElseThrow(() -> new ArticleNotFoundException("Article is not exist"));
+
+        return null;
     }
 }
