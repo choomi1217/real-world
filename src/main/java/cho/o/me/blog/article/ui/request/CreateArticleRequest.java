@@ -1,6 +1,5 @@
 package cho.o.me.blog.article.ui.request;
 
-import cho.o.me.blog.tag.domain.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ArticleRequest {
+public class CreateArticleRequest {
 
     String title;
     String description;
