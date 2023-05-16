@@ -1,8 +1,9 @@
 package cho.o.me.blog.article.ui;
 
 import cho.o.me.blog.article.application.ArticleService;
-import cho.o.me.blog.article.ui.request.ArticleRequest;
+import cho.o.me.blog.article.ui.request.CreateArticleRequest;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
+import cho.o.me.blog.article.ui.response.CreateArticleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,9 +21,15 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<ArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated ArticleRequest request) throws URISyntaxException {
-        ArticleResponse articleResponse = articleService.create(userDetails.getUsername(), request);
-        return ResponseEntity.created(new URI("/api/article/" + articleResponse.getSlug())).body(articleResponse);
+    public ResponseEntity<CreateArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated CreateArticleRequest request) throws URISyntaxException {
+        CreateArticleResponse createArticleResponse = articleService.create(userDetails.getUsername(), request);
+        return ResponseEntity.created(new URI("/api/articles/" + createArticleResponse.getSlug())).body(createArticleResponse);
+    }
+
+    @GetMapping("/api/articles/{slug}")
+    public ResponseEntity<ArticleResponse> article(@PathVariable String slug){
+        ArticleResponse articleResponse = articleService.findBySlug(slug);
+        return ResponseEntity.ok(articleResponse);
     }
 
 }

@@ -10,6 +10,7 @@ import cho.o.me.blog.member.application.MemberService;
 import cho.o.me.blog.member.domain.Member;
 import cho.o.me.blog.tag.application.TagService;
 import cho.o.me.blog.tag.domain.Tag;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ArticleService {
 
-    private final ArticleTagService articleTagService;
     private final ArticleRepository articleRepository;
     private final TagService tagService;
     private final MemberService memberService;
@@ -40,34 +40,32 @@ public class ArticleService {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .body(request.getBody())
-                .tagList(articleTagService.tagIds(request.getTagList()))
-                .createdAt(String.valueOf(Date.valueOf(LocalDate.now())))
+                .tagList(tagIds(request.getTagList()))
+                .createdAt(Date.valueOf(LocalDate.now()))
                 .author(member.getUsername())
                 .build();
 
-        return articleResponse(articleRepository.save(article));
+        Article save = articleRepository.save(article);
+
+        return CreateArticleResponse.of(
+                save.getTitle(),
+                save.getSlug(),
+                save.getDescription(),
+                save.getBody(),
+                tagService.findAllById(save.getTagList())
+        );
     }
 
     private String slug(String title) {
         return title.replace(' ', '_');
     }
 
-    private CreateArticleResponse articleResponse(Article article) {
-        return CreateArticleResponse.of(
-                article.getTitle(),
-                article.getSlug(),
-                article.getDescription(),
-                article.getBody(),
-                tagService.findAllById(article.getTagList())
-        );
-    }
-
     private List<UUID> tagIds(List<String> tagNames) {
         List<Tag> tagList = tagService.findAllByNameIn(tagNames);
 
-        if(tagNames.size() == tagList.size()){
+        if (tagNames.size() == tagList.size()) {
             return tagList.stream().map(Tag::getId).toList();
-        }else{
+        } else {
             return newTagIds(tagNames, tagList);
         }
 
@@ -79,7 +77,7 @@ public class ArticleService {
         List<Tag> newTags = new ArrayList<>();
 
         tagNames.forEach(tagName -> {
-            if(!tagListNames.contains(tagName)){
+            if (!tagListNames.contains(tagName)) {
                 Tag tag = new Tag(tagName);
                 newTags.add(tag);
             }
@@ -92,9 +90,21 @@ public class ArticleService {
         return tagListUUIDs;
     }
 
+    @Transactional
+
     public ArticleResponse findBySlug(String slug) {
         Article article = articleRepository.findBySlug(slug).orElseThrow(() -> new ArticleNotFoundException("Article is not exist"));
-
-        return null;
+        return ArticleResponse.of(
+                article.getSlug(),
+                article.getTitle(),
+                article.getDescription(),
+                article.getBody(),
+                tagService.findAllById(article.getTagList()),
+                article.getCreatedAt(),
+                article.getUpdatedAt(),
+                true, // todo article.getFavorited(),
+                10, // todo article.getFavoritesCount(),
+                article.getAuthor()
+                );
     }
 }
