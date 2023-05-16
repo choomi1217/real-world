@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -31,11 +32,8 @@ public class Article {
     @JoinColumn(name="article_id")
     private List<UUID> tagList;
 
-    private String createdAt;
-    private String updatedAt;
-
-    private Boolean favorited;
-    private Integer favoritesCount;
+    private Date createdAt;
+    private Date updatedAt;
 
     private String author;
 
