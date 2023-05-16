@@ -42,27 +42,23 @@ public class AccountUsercase {
     }
 
     public AccountResponse user(String email)  {
-        Account account = accountService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
-        Member member = memberService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
+        Account account = accountService.findByEmail(email).orElseThrow(()-> new UserNotFoundElementException("User Not Found"));
+        Member member = memberService.findByEmail(email).orElseThrow(()-> new UserNotFoundElementException("User Not Found"));
         return AccountResponse.from(account, member);
     }
 
 
     public AccountResponse login(LoginRequest loginRequest){
-        try {
-            Account account = accountService.findByEmail(loginRequest.email())
-                    .filter(find -> passwordEncoder.matches(loginRequest.password(), find.getPassword()))
-                    .orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
-            Member member = memberService.findByEmail(loginRequest.email()).orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
-            return AccountResponse.from(account, member);
-        } catch (UserNotFoundElementException e) {
-            throw new IllegalArgumentException("Invalid email or password.");
-        }
+        Account account = accountService.findByEmail(loginRequest.email())
+                .filter(find -> passwordEncoder.matches(loginRequest.password(), find.getPassword()))
+                .orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
+        Member member = memberService.findByEmail(loginRequest.email()).orElseThrow(() -> new UserNotFoundElementException("User Not Found"));
+        return AccountResponse.from(account, member);
     }
 
     public AccountResponse update(String email, UpdateRequest updateRequest) {
-        Account account = accountService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
-        Member member = memberService.findByEmail(email).orElseThrow(()-> new UsernameNotFoundException("User Not Found"));
+        Account account = accountService.findByEmail(email).orElseThrow(()-> new UserNotFoundElementException("User Not Found"));
+        Member member = memberService.findByEmail(email).orElseThrow(()-> new UserNotFoundElementException("User Not Found"));
         account.update(updateRequest.toAccountWithEncodedPassword(updateRequest, passwordEncoder));
         member.update(updateRequest);
         return AccountResponse.from(account, member);
