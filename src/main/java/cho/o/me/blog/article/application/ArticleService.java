@@ -91,9 +91,11 @@ public class ArticleService {
     }
 
     @Transactional
-
     public ArticleResponse findBySlug(String slug) {
         Article article = articleRepository.findBySlug(slug).orElseThrow(() -> new ArticleNotFoundException("Article is not exist"));
+        // 사용자가 게시글에 좋아요를 눌렀는지 조회
+        // 얼마나 많은 사용자가 이 게시글에 좋아요 눌렀는지 조회
+        // 내가 이 게시글 작성자를 팔로우 하고 있는지 조회
         return ArticleResponse.of(
                 article.getSlug(),
                 article.getTitle(),

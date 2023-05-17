@@ -75,9 +75,9 @@ class ArticleControllerTest {
     @DisplayName("게시글 한 건을 조회할 수 있다.")
     @Test
     public void articels() throws Exception {
-        //게시글 만들고
+        //given
         CreateArticleResponse article = createArticle();
-        //검색이 되는지 확인하면 된다
+        //when, then
         mockMvc.perform(get("/api/articles/"+article.getSlug()))
                 .andExpect(status().isOk())
                 .andDo(print());
