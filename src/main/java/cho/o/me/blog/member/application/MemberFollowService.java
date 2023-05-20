@@ -30,7 +30,7 @@ public class MemberFollowService {
         Member follower = memberService.findByEmail(followerEmail).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
         Member followed = memberService.findByUsername(followedName).orElseThrow(() -> new UsernameNotFoundException("User Not Found"));
 
-        if( !isItFollow(followed, follower) ){
+        if( !isItFollow(follower, followed) ){
             throw new NotFollowingException( String.format("%s is not following %s.", follower.getUsername(), followed.getUsername()));
         }
 
@@ -38,7 +38,7 @@ public class MemberFollowService {
         return new ProfileResponse(followed, false);
     }
 
-    private boolean isItFollow(Member followed, Member follower) {
-        return followService.exists(followed.getUsername(), follower.getUsername());
+    private boolean isItFollow(Member follower, Member followed) {
+        return followService.exists(follower.getUsername(), followed.getUsername());
     }
 }
