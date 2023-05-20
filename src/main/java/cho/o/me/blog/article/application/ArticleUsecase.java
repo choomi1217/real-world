@@ -40,6 +40,7 @@ public class ArticleUsecase {
     private final TagService tagService;
     private final MemberProfileService memberProfileService;
 
+    @Transactional
     public ArticleResponse favorite(String email, String slug) {
         AccountResponse accountResponse = accountUsercase.user(email);
         Article article = articleService.findBySlug(slug);
