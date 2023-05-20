@@ -29,7 +29,7 @@ public class ArticleResponse {
     Date updatedAt;
     Boolean favorited;
     Integer favoritesCount;
-    ProfileResponse author;
+    ProfileResponse profile;
 
     public static ArticleResponse of(
             String slug,
