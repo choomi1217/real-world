@@ -16,6 +16,6 @@ public class CreateArticleRequest {
     String title;
     String description;
     String body;
-    List<String> tagList;
+    List<String> tagNameList;
 
 }

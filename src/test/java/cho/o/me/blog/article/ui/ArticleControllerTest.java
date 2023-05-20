@@ -55,7 +55,7 @@ class ArticleControllerTest {
                 .title(title)
                 .description(description)
                 .body(body)
-                .tagList(tagList)
+                .tagNameList(tagList)
                 .build();
 
         String articleContent = mapper.writeValueAsString(createArticleRequest);
@@ -93,7 +93,7 @@ class ArticleControllerTest {
                 .title(title)
                 .description(description)
                 .body(body)
-                .tagList(tagList)
+                .tagNameList(tagList)
                 .build();
 
         String articleContent = mapper.writeValueAsString(createArticleRequest);
