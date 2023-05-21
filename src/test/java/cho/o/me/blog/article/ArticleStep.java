@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 public class ArticleStep {
@@ -22,17 +23,24 @@ public class ArticleStep {
     }
 
     public ArticleResponse createTestArticle(CreateArticleRequest request, AccountResponse author) throws Exception {
-        String articleContent = mapper.writeValueAsString(request);
+        String articleRequest = mapper.writeValueAsString(request);
 
-        String responseAsString = mockMvc.perform(post("/api/articles")
+        String createArticleResponseContent = mockMvc.perform(post("/api/articles")
                         .header(HttpHeaders.AUTHORIZATION, "Token " + author.token())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(articleContent))
+                        .content(articleRequest))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        return mapper.readValue(responseAsString, ArticleResponse.class);
+        CreateArticleResponse createArticleResponse = mapper.readValue(createArticleResponseContent, CreateArticleResponse.class);
+
+        String articleContent = mockMvc.perform(get("/api/articles/" + createArticleResponse.getSlug()))
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+
+        return mapper.readValue(articleContent, ArticleResponse.class);
     }
 
 }
