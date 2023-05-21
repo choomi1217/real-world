@@ -40,33 +40,6 @@ public class ArticleUsecase {
     private final TagService tagService;
     private final MemberProfileService memberProfileService;
 
-    @Transactional
-    public ArticleResponse favorite(String email, String slug) {
-        AccountResponse accountResponse = accountUsercase.user(email);
-        Article article = articleService.findBySlug(slug);
-        Favorite favoriteRequest = Favorite.builder().userEmail(accountResponse.email()).slug(article.getSlug()).build();
-
-        favoriteService.save(favoriteRequest);
-        List<Favorite> favoriteList = favoriteService.findBySlug(slug);
-        boolean exists = followService.exists(email, article.getAuthor());
-
-        ProfileResponse profile = memberProfileService.profile(article.getAuthor());
-
-        return ArticleResponse.builder()
-                .slug(article.getSlug())
-                .title(article.getTitle())
-                .description(article.getDescription())
-                .body(article.getBody())
-                .tagList(tagService.findAllById(article.getTagList()).stream().map(Tag::getName).collect(Collectors.toList()))
-                .createdAt(article.getCreatedAt())
-                .updatedAt(article.getUpdatedAt())
-                .favorited(exists)
-                .favoritesCount(favoriteList.size())
-                .profile(profile)
-                .build();
-
-    }
-
     public CreateArticleResponse create(String email, CreateArticleRequest request) {
         Member member = memberService.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " is not found"));
 
@@ -120,6 +93,10 @@ public class ArticleUsecase {
 
         return tagListUUIDs;
     }
+
+    private List<String> tagNames(List<Tag> tagList){
+        return tagList.stream().map(Tag::getName).collect(Collectors.toList());
+    }
     private String slug(String title) {
         return title.replace(' ', '_');
     }
@@ -140,4 +117,55 @@ public class ArticleUsecase {
                 0,
                 article.getAuthor());
     }
+
+    @Transactional
+    public ArticleResponse favorite(String email, String slug) {
+        AccountResponse accountResponse = accountUsercase.user(email);
+        Article article = articleService.findBySlug(slug);
+        Favorite favoriteRequest = Favorite.builder().userEmail(accountResponse.email()).slug(article.getSlug()).build();
+
+        favoriteService.save(favoriteRequest);
+        List<Favorite> favoriteList = favoriteService.findBySlug(slug);
+
+        ProfileResponse profile = memberProfileService.profile(article.getAuthor());
+
+        return ArticleResponse.builder()
+                .slug(article.getSlug())
+                .title(article.getTitle())
+                .description(article.getDescription())
+                .body(article.getBody())
+                .tagNameList(tagNames(tagService.findAllById(article.getTagList())))
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
+                .favorited(true)
+                .favoritesCount(favoriteList.size())
+                .profile(profile)
+                .build();
+    }
+
+    @Transactional
+    public ArticleResponse unfavorite(String email, String slug) {
+        AccountResponse accountResponse = accountUsercase.user(email);
+        Article article = articleService.findBySlug(slug);
+        Favorite favorite = favoriteService.findByUseremailAndSlug(accountResponse.email(), article.getSlug());
+
+        favoriteService.delete(favorite);
+        List<Favorite> favoriteList = favoriteService.findBySlug(slug);
+
+        ProfileResponse profile = memberProfileService.profile(article.getAuthor());
+
+        return ArticleResponse.builder()
+                .slug(article.getSlug())
+                .title(article.getTitle())
+                .description(article.getDescription())
+                .body(article.getBody())
+                .tagNameList(tagNames(tagService.findAllById(article.getTagList())))
+                .createdAt(article.getCreatedAt())
+                .updatedAt(article.getUpdatedAt())
+                .favorited(false)
+                .favoritesCount(favoriteList.size())
+                .profile(profile)
+                .build();
+    }
+
 }
