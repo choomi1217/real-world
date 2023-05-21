@@ -10,11 +10,9 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -37,7 +35,7 @@ class ProfileControllerTest {
     @Test
     @DisplayName(value = "톰의 프로필을 조회 할 수 있다")
     public void profile() throws Exception {
-        AccountResponse tom = step.signUpAndLogin("tom@gmail.com", "tom", "tom");
+        AccountResponse tom = step.signUp("tom@gmail.com", "tom", "tom");
         mockMvc.perform(get("/api/profiles/"+tom.username()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username").value(tom.username()))
@@ -48,8 +46,8 @@ class ProfileControllerTest {
     @Test
     @DisplayName(value = "톰은 제리 프로필을 조회 할 수 있다")
     public void profileOther() throws Exception {
-        AccountResponse tom = step.signUpAndLogin("tom@gmail.com", "tom", "tom");
-        AccountResponse jerry = step.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        AccountResponse tom = step.signUp("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = step.signUp("jerry@gmail.com", "jerry", "jerry");
 
         mockMvc.perform(post("/api/profiles/{username}/follow", jerry.username())
                 .header(HttpHeaders.AUTHORIZATION, "Token " + tom.token()))

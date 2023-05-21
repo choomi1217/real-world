@@ -46,8 +46,8 @@ class FavoriteControllerTest {
     @Test
     public void favorite() throws Exception {
         //given
-        AccountResponse tom = accountStep.signUpAndLogin("tom@gmail.com", "tom", "tom");
-        AccountResponse jerry = accountStep.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        AccountResponse tom = accountStep.signUp("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = accountStep.signUp("jerry@gmail.com", "jerry", "jerry");
         ArticleResponse testArticle = createTestArticle(tom);
         String slug = testArticle.getSlug();
 
@@ -64,8 +64,8 @@ class FavoriteControllerTest {
     @Test
     public void unfavorite() throws Exception {
         //given
-        AccountResponse tom = accountStep.signUpAndLogin("tom@gmail.com", "tom", "tom");
-        AccountResponse jerry = accountStep.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        AccountResponse tom = accountStep.signUp("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = accountStep.signUp("jerry@gmail.com", "jerry", "jerry");
         ArticleResponse tomArticle = createTestArticle(tom);
         favoriteHisArticle(jerry, tomArticle);
 

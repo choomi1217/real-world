@@ -37,8 +37,8 @@ class FollowControllerTest {
     public void follow() throws Exception {
 
         //given
-        AccountResponse tom = step.signUpAndLogin("tom@gmail.com", "tom", "tom");
-        AccountResponse jerry = step.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        AccountResponse tom = step.signUp("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = step.signUp("jerry@gmail.com", "jerry", "jerry");
 
         //when&then
         mockMvc.perform(post("/api/profiles/{username}/follow", jerry.username())
@@ -53,8 +53,8 @@ class FollowControllerTest {
     @DisplayName("톰은 제리를 언팔로우 할 수 있다.")
     public void unfollow() throws Exception {
         //given
-        AccountResponse tom = step.signUpAndLogin("tom@gmail.com", "tom", "tom");
-        AccountResponse jerry = step.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        AccountResponse tom = step.signUp("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = step.signUp("jerry@gmail.com", "jerry", "jerry");
 
         mockMvc.perform(post("/api/profiles/{username}/follow", jerry.username())
                 .header(HttpHeaders.AUTHORIZATION, "Token " + tom.token()));
