@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -47,19 +48,43 @@ class FavoriteControllerTest {
         //given
         AccountResponse tom = accountStep.signUpAndLogin("tom@gmail.com", "tom", "tom");
         AccountResponse jerry = accountStep.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
-        CreateArticleRequest articleRequest = CreateArticleRequest.builder().title("tom title").body("tom body").description("tom description").tagNameList(List.of("tag1","tag2")).build();
-        ArticleResponse testArticle = articleStep.createTestArticle(articleRequest, tom);
-
-        //when&then
+        ArticleResponse testArticle = createTestArticle(tom);
         String slug = testArticle.getSlug();
 
+        //when&then
         mockMvc.perform(get("/api/articles/"+slug+"/favorite")
                         .header(HttpHeaders.AUTHORIZATION, "Token " + jerry.token()))
                 .andExpect(status().isOk())
-                //.andExpect(jsonPath("favorited").value("true"))
-                //.andExpect(jsonPath("favoritesCount").value("1"))
+                .andExpect(jsonPath("favorited").value("true"))
+                .andExpect(jsonPath("favoritesCount").value("1"))
                 .andDo(print());
     }
 
+    @DisplayName("제리는 톰의 게시글에 좋아요를 취소할 수 있다")
+    @Test
+    public void unfavorite() throws Exception {
+        //given
+        AccountResponse tom = accountStep.signUpAndLogin("tom@gmail.com", "tom", "tom");
+        AccountResponse jerry = accountStep.signUpAndLogin("jerry@gmail.com", "jerry", "jerry");
+        ArticleResponse tomArticle = createTestArticle(tom);
+        favoriteHisArticle(jerry, tomArticle);
+
+        mockMvc.perform(delete("/api/articles/"+ tomArticle.getSlug() +"/favorite")
+                    .header(HttpHeaders.AUTHORIZATION, "Token " + jerry.token()))
+                .andExpect(status().isOk())
+                .andDo(print());
+
+    }
+
+    private void favoriteHisArticle(AccountResponse jerry, ArticleResponse testArticle) throws Exception {
+        String slug = testArticle.getSlug();
+        mockMvc.perform(get("/api/articles/" + slug + "/favorite")
+                .header(HttpHeaders.AUTHORIZATION, "Token " + jerry.token()));
+    }
+
+    private ArticleResponse createTestArticle(AccountResponse tom) throws Exception {
+        CreateArticleRequest articleRequest = CreateArticleRequest.builder().title("tom title").body("tom body").description("tom description").tagNameList(List.of("tag1", "tag2")).build();
+        return articleStep.createTestArticle(articleRequest, tom);
+    }
 
 }

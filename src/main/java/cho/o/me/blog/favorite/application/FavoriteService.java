@@ -20,4 +20,12 @@ public class FavoriteService {
     public List<Favorite> findBySlug(String slug) {
         return favoriteRepository.findBySlug(slug);
     }
+
+    public Favorite findByUseremailAndSlug(String userEmail, String slug){
+        return favoriteRepository.findByUserEmailAndSlug(userEmail, slug);
+    }
+
+    public void delete(Favorite favorite) {
+        favoriteRepository.delete(favorite);
+    }
 }

@@ -19,13 +19,12 @@ public class FavoriteController {
 
     @GetMapping("/api/articles/{slug}/favorite")
     public ResponseEntity<ArticleResponse> favorite(@AuthenticationPrincipal UserDetails userDetails,  @PathVariable String slug){
-        ArticleResponse articleResponse = articleUsecase.favorite(userDetails.getUsername(), slug);
-        return ResponseEntity.ok(articleResponse);
+        return ResponseEntity.ok(articleUsecase.favorite(userDetails.getUsername(), slug));
     }
 
     @DeleteMapping("/api/articles/{slug}/favorite")
-    public void unfavorite(@AuthenticationPrincipal UserDetails userDetails,  @PathVariable String slug){
-
+    public ResponseEntity<ArticleResponse> unfavorite(@AuthenticationPrincipal UserDetails userDetails,  @PathVariable String slug){
+        return ResponseEntity.ok(articleUsecase.unfavorite(userDetails.getUsername(), slug));
     }
 
 }
