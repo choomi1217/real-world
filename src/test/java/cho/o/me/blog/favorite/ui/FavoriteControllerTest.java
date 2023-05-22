@@ -3,8 +3,9 @@ package cho.o.me.blog.favorite.ui;
 import cho.o.me.blog.account.AccountStep;
 import cho.o.me.blog.account.ui.response.AccountResponse;
 import cho.o.me.blog.article.ArticleStep;
-import cho.o.me.blog.article.ui.request.CreateArticleRequest;
+import cho.o.me.blog.article.ui.request.ArticleCreateRequest;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
+import cho.o.me.blog.article.ui.response.ArticleCreateResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -48,7 +49,7 @@ class FavoriteControllerTest {
         //given
         AccountResponse tom = accountStep.signUp("tom@gmail.com", "tom", "tom");
         AccountResponse jerry = accountStep.signUp("jerry@gmail.com", "jerry", "jerry");
-        ArticleResponse testArticle = createTestArticle(tom);
+        ArticleResponse testArticle = createTestArticleResponse(tom);
         String slug = testArticle.getSlug();
 
         //when&then
@@ -66,7 +67,7 @@ class FavoriteControllerTest {
         //given
         AccountResponse tom = accountStep.signUp("tom@gmail.com", "tom", "tom");
         AccountResponse jerry = accountStep.signUp("jerry@gmail.com", "jerry", "jerry");
-        ArticleResponse tomArticle = createTestArticle(tom);
+        ArticleResponse tomArticle = createTestArticleResponse(tom);
         favoriteHisArticle(jerry, tomArticle);
 
         mockMvc.perform(delete("/api/articles/"+ tomArticle.getSlug() +"/favorite")
@@ -82,9 +83,10 @@ class FavoriteControllerTest {
                 .header(HttpHeaders.AUTHORIZATION, "Token " + jerry.token()));
     }
 
-    private ArticleResponse createTestArticle(AccountResponse tom) throws Exception {
-        CreateArticleRequest articleRequest = CreateArticleRequest.builder().title("tom title").body("tom body").description("tom description").tagNameList(List.of("tag1", "tag2")).build();
-        return articleStep.createTestArticle(articleRequest, tom);
+    private ArticleResponse createTestArticleResponse(AccountResponse tom) throws Exception {
+        ArticleCreateRequest articleRequest = ArticleCreateRequest.builder().title("tom title").body("tom body").description("tom description").tagNameList(List.of("tag1", "tag2")).build();
+        ArticleCreateResponse testArticle = articleStep.createTestArticle(articleRequest, tom);
+        return articleStep.getTestArticle(testArticle);
     }
 
 }

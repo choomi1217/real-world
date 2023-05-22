@@ -1,10 +1,9 @@
 package cho.o.me.blog.article;
 
 import cho.o.me.blog.account.ui.response.AccountResponse;
-import cho.o.me.blog.article.ui.request.CreateArticleRequest;
+import cho.o.me.blog.article.ui.request.ArticleCreateRequest;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
-import cho.o.me.blog.article.ui.response.CreateArticleResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import cho.o.me.blog.article.ui.response.ArticleCreateResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -12,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 public class ArticleStep {
 
@@ -22,7 +23,7 @@ public class ArticleStep {
         this.mockMvc = mockMvc;
     }
 
-    public ArticleResponse createTestArticle(CreateArticleRequest request, AccountResponse author) throws Exception {
+    public ArticleCreateResponse createTestArticle(ArticleCreateRequest request, AccountResponse author) throws Exception {
         String articleRequest = mapper.writeValueAsString(request);
 
         String createArticleResponseContent = mockMvc.perform(post("/api/articles")
@@ -33,14 +34,15 @@ public class ArticleStep {
                 .getResponse()
                 .getContentAsString();
 
-        CreateArticleResponse createArticleResponse = mapper.readValue(createArticleResponseContent, CreateArticleResponse.class);
+        return mapper.readValue(createArticleResponseContent, ArticleCreateResponse.class);
+    }
 
-        String articleContent = mockMvc.perform(get("/api/articles/" + createArticleResponse.getSlug()))
+    public ArticleResponse getTestArticle(ArticleCreateResponse article) throws Exception {
+        String articleResponse = mockMvc.perform(get("/api/articles/" + article.getSlug()))
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
 
-        return mapper.readValue(articleContent, ArticleResponse.class);
+        return mapper.readValue(articleResponse, ArticleResponse.class);
     }
-
 }
