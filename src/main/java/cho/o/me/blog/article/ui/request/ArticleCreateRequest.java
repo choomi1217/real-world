@@ -11,7 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateArticleRequest {
+public class ArticleCreateRequest {
 
     String title;
     String description;

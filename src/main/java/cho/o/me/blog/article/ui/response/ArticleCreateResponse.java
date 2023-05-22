@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 @JsonRootName("article")
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateArticleResponse {
+public class ArticleCreateResponse {
 
     String title;
     String slug;
@@ -19,8 +19,8 @@ public class CreateArticleResponse {
     String body;
     List<String> tagList;
 
-    public static CreateArticleResponse of(String title, String slug, String description, String body, List<Tag> tagList) {
-        CreateArticleResponse articleResponse = new CreateArticleResponse();
+    public static ArticleCreateResponse of(String title, String slug, String description, String body, List<Tag> tagList) {
+        ArticleCreateResponse articleResponse = new ArticleCreateResponse();
         articleResponse.title = title;
         articleResponse.slug = slug;
         articleResponse.description = description;
