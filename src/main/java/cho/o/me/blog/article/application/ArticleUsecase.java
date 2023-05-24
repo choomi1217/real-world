@@ -3,9 +3,11 @@ package cho.o.me.blog.article.application;
 import cho.o.me.blog.account.application.AccountUsercase;
 import cho.o.me.blog.account.ui.response.AccountResponse;
 import cho.o.me.blog.article.domain.Article;
-import cho.o.me.blog.article.ui.request.CreateArticleRequest;
+import cho.o.me.blog.article.ui.request.ArticleCreateRequest;
+import cho.o.me.blog.article.ui.request.ArticleFetchRequest;
+import cho.o.me.blog.article.ui.response.ArticleListResponse;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
-import cho.o.me.blog.article.ui.response.CreateArticleResponse;
+import cho.o.me.blog.article.ui.response.ArticleCreateResponse;
 import cho.o.me.blog.favorite.application.FavoriteService;
 import cho.o.me.blog.favorite.domain.Favorite;
 import cho.o.me.blog.follow.application.FollowService;
@@ -17,6 +19,7 @@ import cho.o.me.blog.tag.application.TagService;
 import cho.o.me.blog.tag.domain.Tag;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +43,7 @@ public class ArticleUsecase {
     private final TagService tagService;
     private final MemberProfileService memberProfileService;
 
-    public CreateArticleResponse create(String email, CreateArticleRequest request) {
+    public ArticleCreateResponse create(String email, ArticleCreateRequest request) {
         Member member = memberService.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email + " is not found"));
 
         Article article = Article.builder()
@@ -55,7 +58,7 @@ public class ArticleUsecase {
 
         Article save = articleService.save(article);
 
-        return CreateArticleResponse.of(
+        return ArticleCreateResponse.of(
                 save.getTitle(),
                 save.getSlug(),
                 save.getDescription(),
@@ -102,7 +105,7 @@ public class ArticleUsecase {
     }
 
     @Transactional
-    public ArticleResponse findBySlugWithoutAuthenticate(String slug) {
+    public ArticleResponse article(String slug) {
         Article article = articleService.findBySlug(slug);
 
         return ArticleResponse.of(
@@ -168,4 +171,9 @@ public class ArticleUsecase {
                 .build();
     }
 
+    public ArticleListResponse articles(Pageable pageable, ArticleFetchRequest request, String email) {
+        List<Article> articleList = articleService.articles(pageable, request);
+        AccountResponse accountResponse = accountUsercase.user(email);
+        return null;
+    }
 }

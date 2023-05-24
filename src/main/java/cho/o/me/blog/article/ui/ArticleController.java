@@ -1,11 +1,14 @@
 package cho.o.me.blog.article.ui;
 
-import cho.o.me.blog.article.application.ArticleService;
 import cho.o.me.blog.article.application.ArticleUsecase;
-import cho.o.me.blog.article.ui.request.CreateArticleRequest;
+import cho.o.me.blog.article.ui.request.ArticleCreateRequest;
+import cho.o.me.blog.article.ui.request.ArticleFetchRequest;
+import cho.o.me.blog.article.ui.response.ArticleListResponse;
 import cho.o.me.blog.article.ui.response.ArticleResponse;
-import cho.o.me.blog.article.ui.response.CreateArticleResponse;
+import cho.o.me.blog.article.ui.response.ArticleCreateResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,15 +25,25 @@ public class ArticleController {
     private final ArticleUsecase articleUsecase;
 
     @PostMapping("/api/articles")
-    public ResponseEntity<CreateArticleResponse> create(@AuthenticationPrincipal UserDetails userDetails, @RequestBody @Validated CreateArticleRequest request) throws URISyntaxException {
-        CreateArticleResponse createArticleResponse = articleUsecase.create(userDetails.getUsername(), request);
-        return ResponseEntity.created(new URI("/api/articles/" + createArticleResponse.getSlug())).body(createArticleResponse);
+    public ResponseEntity<ArticleCreateResponse> create(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @RequestBody @Validated ArticleCreateRequest request) throws URISyntaxException {
+        ArticleCreateResponse articleCreateResponse = articleUsecase.create(userDetails.getUsername(), request);
+        return ResponseEntity.created(new URI("/api/articles/" + articleCreateResponse.getSlug())).body(articleCreateResponse);
     }
 
     @GetMapping("/api/articles/{slug}")
     public ResponseEntity<ArticleResponse> article(@PathVariable String slug){
-        ArticleResponse articleResponse = articleUsecase.findBySlugWithoutAuthenticate(slug);
+        ArticleResponse articleResponse = articleUsecase.article(slug);
         return ResponseEntity.ok(articleResponse);
+    }
+
+    @GetMapping("/api/articles")
+    public ResponseEntity<ArticleListResponse> articles(
+            @AuthenticationPrincipal UserDetails userDetails,
+            @PageableDefault Pageable pageable,
+            @ModelAttribute ArticleFetchRequest request ){
+        return ResponseEntity.ok(articleUsecase.articles(pageable, request, userDetails.getUsername()));
     }
 
 }
