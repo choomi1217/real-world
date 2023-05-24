@@ -32,6 +32,10 @@ public class Article {
     @JoinColumn(name="article_id")
     private List<UUID> tagList;
 
+    @ElementCollection
+    @JoinColumn(name = "article_id")
+    private List<String> favoritedList;
+
     private Date createdAt;
     private Date updatedAt;
 
