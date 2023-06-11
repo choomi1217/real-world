@@ -3,7 +3,6 @@ package cho.o.me.blog.article.application;
 import cho.o.me.blog.article.domain.Article;
 import cho.o.me.blog.article.repository.ArticleRepository;
 import cho.o.me.blog.article.ui.request.ArticleFetchRequest;
-import cho.o.me.blog.article.ui.response.ArticleResponse;
 import cho.o.me.blog.exception.ArticleNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +24,6 @@ public class ArticleService {
     }
 
     public List<Article> articles(Pageable pageable, ArticleFetchRequest request) {
-        return articleRepository.findAll(request.getAuthor(), request.getTag(), request.getFavorited(), pageable);
+        return articleRepository.findArticlesBySearch(request.getAuthor(), request.getTag(), request.getFavorited(), pageable);
     }
 }

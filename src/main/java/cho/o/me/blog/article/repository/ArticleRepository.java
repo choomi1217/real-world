@@ -1,10 +1,8 @@
 package cho.o.me.blog.article.repository;
 
 import cho.o.me.blog.article.domain.Article;
-import cho.o.me.blog.article.ui.response.ArticleResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -16,10 +14,10 @@ public interface ArticleRepository extends JpaRepository<Article, Long> {
 
     @Query("select Article from Article " +
             "where(:author is null or author = :author) " +
-            "and (:tag is null or tagList = :tag) " +
-            "and (:favorited is null or favoritedList = :favorited)")
-    List<Article> findAll(@Param("author") String author,
-                          @Param("tag") String tag,
-                          @Param("favorited") String favorited,
-                          Pageable pageable);
+            "and (:tag is null or :tag member of tagList) " +
+            "and (:favorited is null or :favorited member of favoritedList)")
+    List<Article> findArticlesBySearch(@Param("author") String author,
+                       @Param("tag") String tag,
+                       @Param("favorited") String favorited,
+                       Pageable pageable);
 }
