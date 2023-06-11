@@ -43,7 +43,7 @@ public class ArticleController {
             @AuthenticationPrincipal UserDetails userDetails,
             @PageableDefault Pageable pageable,
             @ModelAttribute ArticleFetchRequest request ){
-        return ResponseEntity.ok(articleUsecase.articles(pageable, request, userDetails.getUsername()));
+        return ResponseEntity.ok(articleUsecase.articles(pageable, request));
     }
 
 }
