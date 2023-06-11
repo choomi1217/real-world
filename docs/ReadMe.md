@@ -27,4 +27,7 @@ public class ArticleRequest {
 "tagList": ["dragons", "training"]
 ```
 
+문제점은?
+
+도메인이 그대로 나오는 바람에 uuid 작업이 힘들었다.
 

@@ -1,5 +1,6 @@
 package cho.o.me.blog.article.application;
 
+import cho.o.me.blog.account.application.AccountService;
 import cho.o.me.blog.account.application.AccountUsercase;
 import cho.o.me.blog.account.ui.response.AccountResponse;
 import cho.o.me.blog.article.domain.Article;
@@ -10,7 +11,6 @@ import cho.o.me.blog.article.ui.response.ArticleResponse;
 import cho.o.me.blog.article.ui.response.ArticleCreateResponse;
 import cho.o.me.blog.favorite.application.FavoriteService;
 import cho.o.me.blog.favorite.domain.Favorite;
-import cho.o.me.blog.follow.application.FollowService;
 import cho.o.me.blog.member.application.MemberProfileService;
 import cho.o.me.blog.member.application.MemberService;
 import cho.o.me.blog.member.domain.Member;
@@ -39,7 +39,7 @@ public class ArticleUsecase {
     private final FavoriteService favoriteService;
     private final AccountUsercase accountUsercase;
     private final MemberService memberService;
-    private final FollowService followService;
+    private final AccountService accountService;
     private final TagService tagService;
     private final MemberProfileService memberProfileService;
 
@@ -54,6 +54,7 @@ public class ArticleUsecase {
                 .tagList(tagIds(request.getTagNameList()))
                 .createdAt(Date.valueOf(LocalDate.now()))
                 .author(member.getUsername())
+                .authorEmail(member.getEmail())
                 .build();
 
         Article save = articleService.save(article);
@@ -63,23 +64,23 @@ public class ArticleUsecase {
                 save.getSlug(),
                 save.getDescription(),
                 save.getBody(),
-                tagService.findAllById(save.getTagList())
+                save.getTagList()
         );
     }
 
-    private List<UUID> tagIds(List<String> tagNames) {
+    private List<Tag> tagIds(List<String> tagNames) {
         List<Tag> tagList = tagService.findAllByNameIn(tagNames);
 
         if (tagNames.size() == tagList.size()) {
-            return tagList.stream().map(Tag::getId).toList();
+            return tagList;
         } else {
             return newTagIds(tagNames, tagList);
         }
 
     }
 
-    private List<UUID> newTagIds(List<String> tagNameList, List<Tag> tagList) {
-        List<UUID> tagListUUIDs = tagList.stream().map(Tag::getId).collect(Collectors.toList());
+    //todo move to TagService
+    private List<Tag> newTagIds(List<String> tagNameList, List<Tag> tagList) {
         Set<String> tagListNames = tagList.stream().map(Tag::getName).collect(Collectors.toSet());
         List<Tag> newTags = new ArrayList<>();
 
@@ -90,13 +91,10 @@ public class ArticleUsecase {
             }
         });
 
-        tagService.saveAll(newTags).forEach(tag -> {
-            tagListUUIDs.add(tag.getId());
-        });
-
-        return tagListUUIDs;
+        return tagService.saveAll(newTags);
     }
 
+    //todo move to TagService
     private List<String> tagNames(List<Tag> tagList){
         return tagList.stream().map(Tag::getName).collect(Collectors.toList());
     }
@@ -113,7 +111,7 @@ public class ArticleUsecase {
                 article.getTitle(),
                 article.getDescription(),
                 article.getBody(),
-                tagService.findAllById(article.getTagList()),
+                article.getTagList(),
                 article.getCreatedAt(),
                 article.getUpdatedAt(),
                 false,
@@ -137,7 +135,7 @@ public class ArticleUsecase {
                 .title(article.getTitle())
                 .description(article.getDescription())
                 .body(article.getBody())
-                .tagNameList(tagNames(tagService.findAllById(article.getTagList())))
+                .tagNameList(article.getTagList().stream().map(Tag::getName).collect(Collectors.toList()))
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
                 .favorited(true)
@@ -162,7 +160,7 @@ public class ArticleUsecase {
                 .title(article.getTitle())
                 .description(article.getDescription())
                 .body(article.getBody())
-                .tagNameList(tagNames(tagService.findAllById(article.getTagList())))
+                .tagNameList(article.getTagList().stream().map(Tag::getName).collect(Collectors.toList()))
                 .createdAt(article.getCreatedAt())
                 .updatedAt(article.getUpdatedAt())
                 .favorited(false)
@@ -171,9 +169,28 @@ public class ArticleUsecase {
                 .build();
     }
 
-    public ArticleListResponse articles(Pageable pageable, ArticleFetchRequest request, String email) {
+    public ArticleListResponse articles(Pageable pageable, ArticleFetchRequest request) {
         List<Article> articleList = articleService.articles(pageable, request);
-        AccountResponse accountResponse = accountUsercase.user(email);
-        return null;
+        List<ArticleResponse> articleResponseList = new ArrayList<>();
+
+        articleList.forEach(article -> {
+            List<Favorite> favoriteList = favoriteService.findBySlug(article.getSlug());
+            ProfileResponse profile = memberProfileService.profile(article.getAuthor());
+            ArticleResponse articleResponse = ArticleResponse.builder()
+                    .slug(article.getSlug())
+                    .title(article.getTitle())
+                    .description(article.getDescription())
+                    .body(article.getBody())
+                    .tagNameList(article.getTagList().stream().map(Tag::getName).collect(Collectors.toList()))
+                    .createdAt(article.getCreatedAt())
+                    .updatedAt(article.getUpdatedAt())
+                    .favorited(false)
+                    .favoritesCount(favoriteList.size())
+                    .profile(profile)
+                    .build();
+            articleResponseList.add(articleResponse);
+        });
+
+        return new ArticleListResponse(articleResponseList, articleList.size());
     }
 }
